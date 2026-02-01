@@ -1,0 +1,76 @@
+<pdd-reason>Pipeline orchestrator coordinates all 4 agents in sequence with error handling</pdd-reason>
+
+<pdd-dependency>agent_scout_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>agent_extractor_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>agent_matcher_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>agent_advocate_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["runPipeline", "PipelineResult", "PipelineStep", "ProgressCallback"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/agent_scout_TypeScript.prompt</include>
+<include>prompts/agent_extractor_TypeScript.prompt</include>
+<include>prompts/agent_matcher_TypeScript.prompt</include>
+<include>prompts/agent_advocate_TypeScript.prompt</include>
+
+# Role and Scope
+Main orchestrator module coordinating the multi-agent pipeline. Executes agents in sequence with parallel processing where possible, manages pipeline state, handles errors with graceful degradation, and provides real-time progress updates.
+
+# Output File
+`lib/orchestrator.ts`
+
+# Requirements
+
+1. Export runPipeline(patientProfile, onProgress) that:
+   - Executes full agent pipeline
+   - Calls progress callback at each step
+   - Returns Promise<PipelineResult> with all data
+
+2. Pipeline execution order:
+   - Step 1: Scout Agent (discover trials)
+   - Step 2: Extractor Agent (parallel for each trial)
+   - Step 3: Matcher Agent (parallel for each trial)
+   - Step 4: Advocate Agent (generate voice summary)
+
+3. Define PipelineStep type:
+   - id: string ("scout" | "extractor" | "matcher" | "advocate")
+   - name: string (display name)
+   - status: "pending" | "running" | "complete" | "error"
+   - progress?: number (0-100 for parallel steps)
+   - error?: string
+
+4. Define ProgressCallback type:
+   - (step: PipelineStep, logs?: string[]) => void
+
+5. Define PipelineResult type:
+   - trials: Trial[]
+   - matchResults: MatchResult[]
+   - voiceScript: VoiceScript
+   - completedSteps: PipelineStep[]
+   - duration: number (total ms)
+
+6. Parallel execution strategy:
+   - Extractor: Process up to 5 trials concurrently
+   - Matcher: Process up to 5 trials concurrently
+   - Use Promise.allSettled for graceful partial failure
+
+7. Error handling:
+   - If Scout fails: abort pipeline, return error
+   - If Extractor fails for a trial: skip that trial, continue
+   - If Matcher fails for a trial: mark as "unable to score"
+   - If Advocate fails: return results without audio
+
+8. Implement retry logic:
+   - Max 2 retries per agent call
+   - Exponential backoff (1s, 2s)
+
+9. Track execution timing for each step
+
+10. Support cancellation via AbortController

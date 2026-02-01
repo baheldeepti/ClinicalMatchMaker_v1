@@ -1,0 +1,68 @@
+<pdd-reason>Audio player component for voice summary playback with transcript toggle</pdd-reason>
+
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "component",
+  "name": "AudioPlayer",
+  "props": ["audioUrl", "transcript", "duration"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+
+# Role and Scope
+React component for playing ElevenLabs-generated audio summaries. Includes play/pause controls, progress bar, duration display, and expandable transcript for accessibility.
+
+# Output File
+`src/components/AudioPlayer.tsx`
+
+# Requirements
+
+1. Export AudioPlayer component with props:
+   - audioUrl: string (URL to audio file)
+   - transcript: string (voice script text)
+   - duration?: number (expected duration in seconds)
+
+2. Playback controls:
+   - Play/Pause button with icon toggle
+   - Progress bar (clickable to seek)
+   - Current time / Total duration display
+   - Volume control (optional)
+
+3. Audio element:
+   - Use HTML5 <audio> element
+   - Preload metadata
+   - Handle loading state
+   - Handle playback errors
+
+4. Progress bar:
+   - Visual progress indicator
+   - Clickable/draggable to seek
+   - Show buffered amount (lighter color)
+
+5. Transcript toggle:
+   - "Show Transcript" / "Hide Transcript" button
+   - Expandable section with script text
+   - Accessibility note: "Read transcript below"
+
+6. State management:
+   - isPlaying: boolean
+   - currentTime: number
+   - isLoading: boolean
+   - showTranscript: boolean
+
+7. Keyboard accessibility:
+   - Space to play/pause
+   - Arrow keys to seek (5 second increments)
+
+8. Style with Tailwind CSS:
+   - Rounded container with subtle background
+   - Large, accessible touch targets
+   - Mobile-friendly layout
+
+9. Handle errors:
+   - Display message if audio fails to load
+   - Fall back to transcript-only mode

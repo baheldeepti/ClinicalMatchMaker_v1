@@ -1,0 +1,72 @@
+<pdd-reason>Processing page shows pipeline execution status with animated progress</pdd-reason>
+
+<pdd-dependency>progress_indicator_component_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>orchestrator_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>disclaimer_banner_component_TypeScriptReact.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "page",
+  "route": "/processing",
+  "name": "Processing"
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/orchestrator_TypeScript.prompt</include>
+<include>prompts/progress_indicator_component_TypeScriptReact.prompt</include>
+<include>prompts/disclaimer_banner_component_TypeScriptReact.prompt</include>
+
+# Role and Scope
+React page component for processing route (/processing). Executes the orchestrator pipeline on mount, displays real-time progress via ProgressIndicator, and navigates to results on completion.
+
+# Output File
+`src/pages/Processing.tsx`
+
+# Requirements
+
+1. Export Processing page component
+
+2. Pipeline execution on mount:
+   - Get patientProfile from session context
+   - If no profile, redirect to /intake
+   - Call runPipeline() with profile and progress callback
+   - Store results in session context on completion
+
+3. Progress display:
+   - Render ProgressIndicator with current state
+   - Update steps array as pipeline progresses
+   - Show elapsed time
+
+4. Page content:
+   - Title: "Finding Your Matches"
+   - Reassuring message: "This may take a moment..."
+   - Progress indicator component
+   - Optional: Fun facts about clinical trials while waiting
+
+5. Success handling:
+   - Store pipeline results in context
+   - Navigate to /results automatically
+   - Brief success animation before redirect
+
+6. Error handling:
+   - Display error message if pipeline fails
+   - Show which step failed
+   - Retry button to restart pipeline
+   - Option to go back and modify profile
+
+7. Cancellation:
+   - Show "Cancel" button
+   - Use AbortController to stop pipeline
+   - Navigate back to intake on cancel
+
+8. Prevent navigation away:
+   - Warn user if they try to leave during processing
+   - Use beforeunload event
+
+9. Include DisclaimerBanner at bottom
+
+10. Style with Tailwind CSS:
+    - Centered content
+    - Calming visual design
+    - Adequate spacing for progress indicator

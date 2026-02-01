@@ -1,0 +1,70 @@
+<pdd-reason>Zod schemas define all data types for patient profiles, trials, eligibility, and match results with runtime validation</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["PatientProfileSchema", "TrialSchema", "EligibilitySchema", "MatchResultSchema", "VoiceScriptSchema"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+
+# Role and Scope
+TypeScript module with Zod schemas for PatientProfile, TrialDiscovery, EligibilityCriteria, MatchResult, and VoiceScript. Provides parse functions and type inference for runtime validation at system boundaries.
+
+# Output File
+`lib/schemas.ts`
+
+# Requirements
+
+1. Define PatientProfileSchema with fields:
+   - diagnosis: string (cancer type, required)
+   - stage: enum ["I", "II", "III", "IV", "Unknown"]
+   - biomarkers: array of strings (e.g., "EGFR+", "PD-L1 >50%")
+   - ecogScore: number 0-4 (performance status)
+   - previousTreatments: array of strings
+   - zipcode: string (5-digit US zipcode)
+   - travelRadiusMiles: number (default 50)
+   - languagePreference: enum ["en", "es", "zh", "fr", "de"]
+
+2. Define TrialSchema with fields:
+   - nctId: string (NCT number pattern)
+   - title: string
+   - phase: enum ["Phase 1", "Phase 2", "Phase 3", "Phase 4", "N/A"]
+   - status: string
+   - sponsor: string
+   - conditions: array of strings
+   - interventions: array of strings
+   - locations: array of { facility: string, city: string, state: string, zipcode: string, distance?: number }
+   - url: string (clinicaltrials.gov URL)
+
+3. Define EligibilitySchema with fields:
+   - nctId: string
+   - inclusionCriteria: array of { criterion: string, category: enum ["diagnosis", "biomarker", "treatment", "demographics", "other"] }
+   - exclusionCriteria: array of { criterion: string, category: enum ["diagnosis", "biomarker", "treatment", "demographics", "other"] }
+   - ageRange: { min: number, max: number }
+   - acceptsHealthyVolunteers: boolean
+
+4. Define MatchResultSchema with fields:
+   - nctId: string
+   - score: number (0-100)
+   - category: enum ["strong_match", "possible_match", "future_potential", "not_eligible"]
+   - matchingFactors: array of { factor: string, weight: number }
+   - blockingFactors: array of { factor: string, reason: string }
+   - uncertainFactors: array of string
+   - summary: string (plain-language explanation)
+
+5. Define VoiceScriptSchema with fields:
+   - text: string (voice script content)
+   - audioUrl: string (URL to generated audio)
+   - duration: number (seconds)
+   - language: string
+
+6. Export inferred TypeScript types using z.infer<typeof Schema>
+
+7. Provide parse functions that throw ZodError on validation failure
+
+8. All schemas should be composable for pipeline data structures
+
+# Context
+<web>https://zod.dev/?id=basic-usage</web>

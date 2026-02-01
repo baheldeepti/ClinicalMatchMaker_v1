@@ -1,0 +1,51 @@
+<pdd-reason>Geographic utilities for calculating distances between zipcodes using Haversine formula</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["getCoordinates", "calculateDistance", "filterByRadius", "Coordinates", "Location"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+
+# Role and Scope
+TypeScript module for location-based filtering. Converts zipcodes to coordinates, calculates distances using the Haversine formula, and filters trial locations within a patient's travel radius.
+
+# Output File
+`lib/geo-utils.ts`
+
+# Requirements
+
+1. Export getCoordinates(zipcode: string) that:
+   - Converts US 5-digit zipcode to lat/lng coordinates
+   - Returns { lat: number, lng: number } or null if invalid
+   - Uses embedded zipcode database or lightweight lookup
+
+2. Export calculateDistance(coord1, coord2) that:
+   - Implements Haversine formula for great-circle distance
+   - Returns distance in miles (not kilometers)
+   - Handles edge cases (same point, antipodal points)
+
+3. Export filterByRadius(locations, originZip, radiusMiles) that:
+   - Filters array of Location objects by distance from origin
+   - Adds distance field to each returned location
+   - Sorts results by distance ascending
+   - Returns empty array if origin zipcode is invalid
+
+4. Define Coordinates type: { lat: number, lng: number }
+
+5. Define Location type: { facility: string, city: string, state: string, zipcode: string, distance?: number }
+
+6. Haversine formula implementation:
+   - Earth radius: 3958.8 miles
+   - Handle lat/lng in degrees (convert to radians)
+   - Formula: a = sin²(Δlat/2) + cos(lat1) * cos(lat2) * sin²(Δlng/2)
+   - Distance = 2 * R * atan2(√a, √(1-a))
+
+7. Validate zipcode format (5 digits, numeric only)
+
+8. Performance: O(n) filtering for location arrays
+
+# Context
+<web>https://www.movable-type.co.uk/scripts/latlong.html</web>

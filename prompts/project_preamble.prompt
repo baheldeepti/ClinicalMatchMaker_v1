@@ -1,0 +1,42 @@
+<pdd>
+Project-wide conventions and constraints for ClinicalMatchMaker
+This file should be included in all module prompts
+</pdd>
+
+# Project Preamble: ClinicalMatchMaker
+
+## Language & Framework
+- TypeScript with strict mode enabled
+- React 18+ for frontend components
+- Vite as build tool
+- Tailwind CSS for styling
+
+## Coding Conventions
+- Use functional components with hooks (no class components)
+- Prefer named exports over default exports
+- Use async/await over raw promises
+- Use Zod for runtime validation at boundaries
+- Destructure props in function signatures
+- Use camelCase for variables/functions, PascalCase for types/components
+
+## Error Handling
+- Throw typed errors with descriptive messages
+- Use try-catch at service boundaries
+- Log errors before rethrowing
+- Provide user-friendly error messages in UI components
+
+## Security & Privacy
+- Never log patient identifiable information
+- Validate all external API responses
+- Sanitize user inputs before display
+- Use HTTPS for all external API calls
+
+## Accessibility
+- Use semantic HTML elements
+- Include ARIA labels where appropriate
+- Support keyboard navigation
+- Maintain WCAG 2.1 AA compliance
+
+## Medical Disclaimer
+- All user-facing outputs must acknowledge this is informational only
+- Include disclaimer: "Always consult with a qualified healthcare provider"

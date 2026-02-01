@@ -1,0 +1,66 @@
+<pdd-reason>Trial card component displays individual trial match with score and factors</pdd-reason>
+
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "component",
+  "name": "TrialCard",
+  "props": ["trial", "matchResult"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+
+# Role and Scope
+React component rendering a single trial match card. Displays trial metadata, match score with visual indicator, matching/blocking factors, and link to full trial details on ClinicalTrials.gov.
+
+# Output File
+`src/components/TrialCard.tsx`
+
+# Requirements
+
+1. Export TrialCard component with props:
+   - trial: Trial (from schemas)
+   - matchResult: MatchResult (from schemas)
+
+2. Card header:
+   - Trial title (truncate to 2 lines if needed)
+   - NCT ID as secondary text
+   - Phase badge (e.g., "Phase 2")
+
+3. Match score display:
+   - Large score number (0-100)
+   - Color-coded by category:
+     - strong_match: green (#22c55e)
+     - possible_match: yellow (#eab308)
+     - future_potential: blue (#3b82f6)
+     - not_eligible: gray (#6b7280)
+   - Category label below score
+
+4. Factors section:
+   - Matching factors with checkmark icon (green)
+   - Blocking factors with X icon (red)
+   - Uncertain factors with question mark icon (gray)
+   - Show max 3 factors per category, "and X more" if truncated
+
+5. Location section:
+   - Nearest location facility name
+   - City, State
+   - Distance in miles (if available)
+
+6. Footer:
+   - Sponsor name
+   - "Learn More" link opening ClinicalTrials.gov in new tab
+
+7. Style with Tailwind CSS:
+   - Card with shadow and rounded corners
+   - Hover state with slight elevation
+   - Consistent padding and spacing
+   - Mobile-responsive
+
+8. Accessibility:
+   - Semantic heading hierarchy
+   - Link has descriptive aria-label
+   - Color not sole indicator (use icons too)

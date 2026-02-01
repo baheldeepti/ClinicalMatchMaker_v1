@@ -1,0 +1,67 @@
+<pdd-reason>Progress indicator shows pipeline execution status with agent-level granularity</pdd-reason>
+
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "component",
+  "name": "ProgressIndicator",
+  "props": ["currentStep", "steps", "logs"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+
+# Role and Scope
+React component displaying multi-step progress during pipeline execution. Shows 4 agent steps with status indicators, elapsed time, and optional log messages for transparency.
+
+# Output File
+`src/components/ProgressIndicator.tsx`
+
+# Requirements
+
+1. Export ProgressIndicator component with props:
+   - currentStep: number (0-3, active step index)
+   - steps: PipelineStep[] (from orchestrator)
+   - logs?: string[] (optional status messages)
+
+2. Display 4 pipeline steps:
+   - Step 1: "Finding Trials" (Scout)
+   - Step 2: "Analyzing Eligibility" (Extractor)
+   - Step 3: "Matching Your Profile" (Matcher)
+   - Step 4: "Creating Summary" (Advocate)
+
+3. Step status indicators:
+   - pending: gray circle, dimmed text
+   - running: blue animated spinner
+   - complete: green checkmark
+   - error: red X icon
+
+4. Visual layout:
+   - Vertical stepper with connecting lines
+   - Step name and status icon on each row
+   - Animated transition between states
+
+5. Progress details for running step:
+   - Elapsed time counter (updates every second)
+   - Substep progress if available (e.g., "2/5 trials")
+
+6. Log messages section:
+   - Collapsible "View Details" section
+   - Show last 5 log messages
+   - Auto-scroll to newest
+
+7. Estimated completion:
+   - Show for pending steps
+   - Based on typical execution times
+
+8. Animation:
+   - Smooth transitions between step states
+   - Pulse animation on current step
+   - Success animation on completion
+
+9. Style with Tailwind CSS:
+   - Centered, max-width container
+   - Clear visual hierarchy
+   - Accessible color contrast

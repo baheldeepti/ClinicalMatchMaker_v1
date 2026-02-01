@@ -1,0 +1,939 @@
+[
+  {
+    "reason": "Zod schemas define all data types for patient profiles, trials, eligibility, and match results with runtime validation",
+    "description": "TypeScript module with Zod schemas for PatientProfile, TrialDiscovery, EligibilityCriteria, MatchResult, and VoiceScript. Provides parse functions and type inference. Used by all agents and components for data validation at boundaries.",
+    "dependencies": [],
+    "priority": 1,
+    "filename": "schemas_TypeScript.prompt",
+    "filepath": "lib/schemas.ts",
+    "tags": [
+      "shared",
+      "validation",
+      "types"
+    ],
+    "context_urls": [
+      {
+        "url": "https://zod.dev/",
+        "purpose": "Zod schema validation documentation"
+      },
+      {
+        "url": "https://zod.dev/?id=basic-usage",
+        "purpose": "Zod basic usage examples"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "PatientProfileSchema",
+            "signature": "z.object({...})",
+            "returns": "Zod schema for patient intake"
+          },
+          {
+            "name": "TrialSchema",
+            "signature": "z.object({...})",
+            "returns": "Zod schema for trial discovery"
+          },
+          {
+            "name": "EligibilitySchema",
+            "signature": "z.object({...})",
+            "returns": "Zod schema for eligibility criteria"
+          },
+          {
+            "name": "MatchResultSchema",
+            "signature": "z.object({...})",
+            "returns": "Zod schema for match results"
+          },
+          {
+            "name": "VoiceScriptSchema",
+            "signature": "z.object({...})",
+            "returns": "Zod schema for voice output"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Centralized configuration for all API keys and environment variables with validation",
+    "description": "TypeScript module exporting validated environment configuration. Loads TOOLHOUSE_API_KEY, RTRVR_API_KEY, ELEVENLABS_API_KEY, STRIPE_PUBLISHABLE_KEY from environment. Provides getConfig() function with Zod validation for required keys.",
+    "dependencies": [
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 2,
+    "filename": "config_TypeScript.prompt",
+    "filepath": "lib/config.ts",
+    "tags": [
+      "config",
+      "environment"
+    ],
+    "interface": {
+      "type": "config",
+      "config": {
+        "keys": [
+          {
+            "name": "VITE_TOOLHOUSE_API_KEY",
+            "type": "string",
+            "required": true,
+            "source": "env"
+          },
+          {
+            "name": "VITE_RTRVR_API_KEY",
+            "type": "string",
+            "required": true,
+            "source": "env"
+          },
+          {
+            "name": "VITE_ELEVENLABS_API_KEY",
+            "type": "string",
+            "required": true,
+            "source": "env"
+          },
+          {
+            "name": "VITE_STRIPE_PUBLISHABLE_KEY",
+            "type": "string",
+            "required": true,
+            "source": "env"
+          },
+          {
+            "name": "VITE_CLINICALTRIALS_API_BASE",
+            "type": "string",
+            "required": false,
+            "source": "env"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Toolhouse SDK wrapper for multi-agent orchestration with typed responses",
+    "description": "TypeScript client wrapping Toolhouse SDK. Initializes connection, provides runAgent() method for executing agents with tool bundles. Handles agent-to-agent communication and pipeline state. Supports Anthropic Claude as LLM provider.",
+    "dependencies": [
+      "config_TypeScript.prompt",
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 3,
+    "filename": "toolhouse_client_TypeScript.prompt",
+    "filepath": "lib/toolhouse.ts",
+    "tags": [
+      "client",
+      "agent",
+      "orchestration"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.toolhouse.ai/",
+        "purpose": "Toolhouse SDK documentation"
+      },
+      {
+        "url": "https://docs.toolhouse.ai/toolhouse/quick-start/typescript",
+        "purpose": "Toolhouse TypeScript quickstart"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "createToolhouseClient",
+            "signature": "(apiKey: string) => ToolhouseClient",
+            "returns": "Configured Toolhouse client instance"
+          },
+          {
+            "name": "runAgent",
+            "signature": "(client: ToolhouseClient, agentId: string, input: unknown) => Promise<AgentResult>",
+            "returns": "Agent execution result with typed output"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "rtrvr.ai API client for web scraping and data extraction from clinical trial pages",
+    "description": "TypeScript client for rtrvr.ai API. Provides scrape() method for extracting structured data from ClinicalTrials.gov trial pages. Uses /agent endpoint for full automation with schema-guided extraction.",
+    "dependencies": [
+      "config_TypeScript.prompt",
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 4,
+    "filename": "rtrvr_client_TypeScript.prompt",
+    "filepath": "lib/rtrvr.ts",
+    "tags": [
+      "client",
+      "scraping",
+      "extraction"
+    ],
+    "context_urls": [
+      {
+        "url": "https://www.rtrvr.ai/docs/api",
+        "purpose": "rtrvr.ai API documentation"
+      },
+      {
+        "url": "https://www.rtrvr.ai/docs/api#agent-endpoint",
+        "purpose": "rtrvr.ai agent endpoint for automated extraction"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "createRtrvrClient",
+            "signature": "(apiKey: string) => RtrvrClient",
+            "returns": "Configured rtrvr.ai client"
+          },
+          {
+            "name": "extractTrialData",
+            "signature": "(client: RtrvrClient, nctId: string) => Promise<TrialExtraction>",
+            "returns": "Structured trial eligibility data"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "ElevenLabs API client for text-to-speech synthesis with multi-language support",
+    "description": "TypeScript client wrapping ElevenLabs API. Provides synthesize() method converting text to audio. Supports multiple voices and languages. Returns audio URL and duration. Uses Flash v2.5 for low latency.",
+    "dependencies": [
+      "config_TypeScript.prompt"
+    ],
+    "priority": 5,
+    "filename": "elevenlabs_client_TypeScript.prompt",
+    "filepath": "lib/elevenlabs.ts",
+    "tags": [
+      "client",
+      "voice",
+      "tts"
+    ],
+    "context_urls": [
+      {
+        "url": "https://elevenlabs.io/docs/api-reference/text-to-speech",
+        "purpose": "ElevenLabs TTS API reference"
+      },
+      {
+        "url": "https://elevenlabs.io/docs/developer-guides/how-to-use-tts-with-streaming",
+        "purpose": "ElevenLabs streaming audio guide"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "createElevenLabsClient",
+            "signature": "(apiKey: string) => ElevenLabsClient",
+            "returns": "Configured ElevenLabs client"
+          },
+          {
+            "name": "synthesizeSpeech",
+            "signature": "(client: ElevenLabsClient, text: string, options: SpeechOptions) => Promise<AudioResult>",
+            "returns": "Audio URL and metadata"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Stripe client for payment checkout without backend server",
+    "description": "TypeScript module wrapping Stripe.js for client-only Checkout. Provides createCheckoutSession() for additional trial matches purchase. Uses Stripe Payment Links for serverless payment flow.",
+    "dependencies": [
+      "config_TypeScript.prompt"
+    ],
+    "priority": 6,
+    "filename": "stripe_client_TypeScript.prompt",
+    "filepath": "lib/stripe.ts",
+    "tags": [
+      "client",
+      "payments",
+      "monetization"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.stripe.com/sdks/stripejs-react",
+        "purpose": "Stripe.js React integration"
+      },
+      {
+        "url": "https://docs.stripe.com/payment-links",
+        "purpose": "Stripe Payment Links for no-code checkout"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "initStripe",
+            "signature": "(publishableKey: string) => Promise<Stripe>",
+            "returns": "Initialized Stripe instance"
+          },
+          {
+            "name": "redirectToCheckout",
+            "signature": "(stripe: Stripe, priceId: string) => Promise<void>",
+            "returns": "Redirects to Stripe Checkout"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Geographic utilities for calculating distances between zipcodes using Haversine formula",
+    "description": "TypeScript module for location-based filtering. Provides getCoordinates() to convert zipcode to lat/lng, calculateDistance() using Haversine formula, and filterByRadius() to filter trials within travel distance.",
+    "dependencies": [],
+    "priority": 7,
+    "filename": "geo_utils_TypeScript.prompt",
+    "filepath": "lib/geo-utils.ts",
+    "tags": [
+      "utility",
+      "location",
+      "distance"
+    ],
+    "context_urls": [
+      {
+        "url": "https://www.npmjs.com/package/zipcodes",
+        "purpose": "Node.js zipcode to coordinates library"
+      },
+      {
+        "url": "https://www.movable-type.co.uk/scripts/latlong.html",
+        "purpose": "Haversine formula implementation reference"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "getCoordinates",
+            "signature": "(zipcode: string) => { lat: number, lng: number } | null",
+            "returns": "Coordinates for zipcode or null"
+          },
+          {
+            "name": "calculateDistance",
+            "signature": "(coord1: Coordinates, coord2: Coordinates) => number",
+            "returns": "Distance in miles"
+          },
+          {
+            "name": "filterByRadius",
+            "signature": "(locations: Location[], origin: string, radiusMiles: number) => Location[]",
+            "returns": "Filtered locations within radius"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Agent 1 discovers actively recruiting clinical trials matching patient condition via ClinicalTrials.gov API",
+    "description": "Clinical Trial Scout agent using Toolhouse orchestration. Queries ClinicalTrials.gov API v2.0 for recruiting interventional trials. Filters by condition, location, and phase. Returns up to 5 trial candidates with basic metadata. Uses rtrvr.ai for additional data extraction if needed.",
+    "dependencies": [
+      "toolhouse_client_TypeScript.prompt",
+      "rtrvr_client_TypeScript.prompt",
+      "schemas_TypeScript.prompt",
+      "geo_utils_TypeScript.prompt"
+    ],
+    "priority": 8,
+    "filename": "agent_scout_TypeScript.prompt",
+    "filepath": "agents/scout/index.ts",
+    "tags": [
+      "agent",
+      "discovery",
+      "clinicaltrials"
+    ],
+    "context_urls": [
+      {
+        "url": "https://clinicaltrials.gov/data-api/api",
+        "purpose": "ClinicalTrials.gov API v2.0 documentation"
+      },
+      {
+        "url": "https://clinicaltrials.gov/data-api/about-api/study-data-structure",
+        "purpose": "ClinicalTrials.gov data structure reference"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "runScoutAgent",
+            "signature": "(input: ScoutInput) => Promise<TrialDiscoveryOutput>",
+            "returns": "Array of up to 5 trial candidates"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Agent 2 extracts and parses eligibility criteria from trial pages into structured format",
+    "description": "Eligibility Extractor agent using rtrvr.ai for web extraction. Parses inclusion/exclusion criteria from ClinicalTrials.gov trial pages. Categorizes criteria by type (diagnosis, biomarker, treatment, other). Returns structured eligibility JSON.",
+    "dependencies": [
+      "toolhouse_client_TypeScript.prompt",
+      "rtrvr_client_TypeScript.prompt",
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 9,
+    "filename": "agent_extractor_TypeScript.prompt",
+    "filepath": "agents/extractor/index.ts",
+    "tags": [
+      "agent",
+      "extraction",
+      "eligibility"
+    ],
+    "context_urls": [
+      {
+        "url": "https://www.rtrvr.ai/docs/api",
+        "purpose": "rtrvr.ai extraction API"
+      },
+      {
+        "url": "https://clinicaltrials.gov/study/NCT00000000#eligibility",
+        "purpose": "ClinicalTrials.gov eligibility section structure"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "runExtractorAgent",
+            "signature": "(input: ExtractorInput) => Promise<EligibilityCriteria>",
+            "returns": "Structured eligibility criteria with categorized inclusion/exclusion"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Agent 3 compares patient profile against eligibility criteria to produce match scores",
+    "description": "Clinical Matching Specialist agent. Compares patient profile fields against extracted eligibility criteria. Evaluates hard exclusions first, then inclusion alignment. Calculates weighted score (0-100) with category assignment (strong_match/possible_match/future_potential/not_eligible). Generates factor breakdown and plain-language summary.",
+    "dependencies": [
+      "toolhouse_client_TypeScript.prompt",
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 10,
+    "filename": "agent_matcher_TypeScript.prompt",
+    "filepath": "agents/matcher/index.ts",
+    "tags": [
+      "agent",
+      "matching",
+      "scoring"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.toolhouse.ai/",
+        "purpose": "Toolhouse agent orchestration"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "runMatcherAgent",
+            "signature": "(input: MatcherInput) => Promise<MatchResult>",
+            "returns": "Match score, category, factors, and summary"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Agent 4 generates compassionate voice scripts and synthesizes audio via ElevenLabs",
+    "description": "Patient Advocate agent. Takes match results and generates plain-language voice script (8th-grade reading level). Includes encouraging tone, clear next steps, doctor consultation reminder, and required disclaimer. Synthesizes audio via ElevenLabs API. Supports multiple languages.",
+    "dependencies": [
+      "toolhouse_client_TypeScript.prompt",
+      "elevenlabs_client_TypeScript.prompt",
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 11,
+    "filename": "agent_advocate_TypeScript.prompt",
+    "filepath": "agents/advocate/index.ts",
+    "tags": [
+      "agent",
+      "voice",
+      "advocacy"
+    ],
+    "context_urls": [
+      {
+        "url": "https://elevenlabs.io/docs/api-reference/text-to-speech",
+        "purpose": "ElevenLabs TTS API"
+      },
+      {
+        "url": "https://elevenlabs.io/docs/voices/voice-library",
+        "purpose": "ElevenLabs voice selection"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "runAdvocateAgent",
+            "signature": "(input: AdvocateInput) => Promise<VoiceScript>",
+            "returns": "Voice script text and audio URL"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Pipeline orchestrator coordinates all 4 agents in sequence with error handling",
+    "description": "Main orchestrator module coordinating the multi-agent pipeline. Executes: Scout -> Extractor (parallel per trial) -> Matcher (parallel per trial) -> Advocate. Manages pipeline state, handles errors with graceful degradation, implements retry logic, and tracks execution progress for UI updates.",
+    "dependencies": [
+      "agent_scout_TypeScript.prompt",
+      "agent_extractor_TypeScript.prompt",
+      "agent_matcher_TypeScript.prompt",
+      "agent_advocate_TypeScript.prompt",
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 12,
+    "filename": "orchestrator_TypeScript.prompt",
+    "filepath": "lib/orchestrator.ts",
+    "tags": [
+      "orchestration",
+      "pipeline",
+      "coordination"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.toolhouse.ai/",
+        "purpose": "Toolhouse pipeline orchestration"
+      }
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": [
+          {
+            "name": "runPipeline",
+            "signature": "(patientProfile: PatientProfile, onProgress: ProgressCallback) => Promise<PipelineResult>",
+            "returns": "Complete pipeline results with all match data and audio"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Patient intake form component with medical profile fields and validation",
+    "description": "React component for patient data entry. Fields: diagnosis (text), stage (dropdown), biomarkers (text), ECOG score (0-4 dropdown), previous treatments (multi-select), zipcode (text), travel radius (slider), language preference (dropdown). Uses react-hook-form with Zod validation. Submits to orchestrator.",
+    "dependencies": [
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 13,
+    "filename": "intake_form_component_TypeScriptReact.prompt",
+    "filepath": "src/components/IntakeForm.tsx",
+    "tags": [
+      "frontend",
+      "component",
+      "form"
+    ],
+    "context_urls": [
+      {
+        "url": "https://react-hook-form.com/",
+        "purpose": "React Hook Form documentation"
+      },
+      {
+        "url": "https://react-hook-form.com/get-started#SchemaValidation",
+        "purpose": "React Hook Form with Zod validation"
+      }
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "onSubmit",
+            "type": "(data: PatientProfile) => Promise<void>",
+            "required": true
+          },
+          {
+            "name": "isLoading",
+            "type": "boolean",
+            "required": false
+          }
+        ],
+        "emits": [
+          "submit"
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Trial card component displays individual trial match with score and factors",
+    "description": "React component rendering single trial match card. Shows trial title, NCT ID, phase, sponsor, match score badge (color-coded by category), matching/blocking/uncertain factors list, nearest location with distance, and 'Learn More' link to clinicaltrials.gov.",
+    "dependencies": [
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 14,
+    "filename": "trial_card_component_TypeScriptReact.prompt",
+    "filepath": "src/components/TrialCard.tsx",
+    "tags": [
+      "frontend",
+      "component",
+      "ui"
+    ],
+    "context_urls": [
+      {
+        "url": "https://tailwindcss.com/docs/",
+        "purpose": "Tailwind CSS documentation for styling"
+      }
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "trial",
+            "type": "Trial",
+            "required": true
+          },
+          {
+            "name": "matchResult",
+            "type": "MatchResult",
+            "required": true
+          }
+        ],
+        "emits": []
+      }
+    }
+  },
+  {
+    "reason": "Pie chart component visualizes match category distribution across trials",
+    "description": "React component using Recharts to display pie chart of match categories. Shows distribution of strong_match, possible_match, future_potential, and not_eligible. Color-coded segments with legend and counts.",
+    "dependencies": [
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 15,
+    "filename": "match_pie_chart_component_TypeScriptReact.prompt",
+    "filepath": "src/components/MatchPieChart.tsx",
+    "tags": [
+      "frontend",
+      "component",
+      "visualization"
+    ],
+    "context_urls": [
+      {
+        "url": "https://recharts.org/en-US/api/PieChart",
+        "purpose": "Recharts PieChart API"
+      },
+      {
+        "url": "https://recharts.org/en-US/examples/PieChartWithCustomizedLabel",
+        "purpose": "Recharts customized pie chart example"
+      }
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "matchResults",
+            "type": "MatchResult[]",
+            "required": true
+          }
+        ],
+        "emits": []
+      }
+    }
+  },
+  {
+    "reason": "Audio player component for voice summary playback with transcript toggle",
+    "description": "React component for playing ElevenLabs-generated audio. Shows play/pause button, progress bar, duration display. Includes transcript toggle for accessibility (hearing impaired). Displays voice script text when expanded.",
+    "dependencies": [
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 16,
+    "filename": "audio_player_component_TypeScriptReact.prompt",
+    "filepath": "src/components/AudioPlayer.tsx",
+    "tags": [
+      "frontend",
+      "component",
+      "accessibility",
+      "audio"
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "audioUrl",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "transcript",
+            "type": "string",
+            "required": true
+          },
+          {
+            "name": "duration",
+            "type": "number",
+            "required": false
+          }
+        ],
+        "emits": []
+      }
+    }
+  },
+  {
+    "reason": "Progress indicator shows pipeline execution status with agent-level granularity",
+    "description": "React component displaying multi-step progress during pipeline execution. Shows 4 agent steps with status indicators (pending/running/complete/error). Displays current agent name, elapsed time, and optional log messages. Animated transitions between steps.",
+    "dependencies": [
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 17,
+    "filename": "progress_indicator_component_TypeScriptReact.prompt",
+    "filepath": "src/components/ProgressIndicator.tsx",
+    "tags": [
+      "frontend",
+      "component",
+      "ui",
+      "status"
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "currentStep",
+            "type": "number",
+            "required": true
+          },
+          {
+            "name": "steps",
+            "type": "PipelineStep[]",
+            "required": true
+          },
+          {
+            "name": "logs",
+            "type": "string[]",
+            "required": false
+          }
+        ],
+        "emits": []
+      }
+    }
+  },
+  {
+    "reason": "Payment modal for Stripe checkout when user exceeds 5 free matches",
+    "description": "React component displaying upgrade prompt and Stripe checkout integration. Shows remaining free matches count, pricing info, and 'Upgrade' button. Uses Stripe Payment Links for serverless checkout flow. Handles success/cancel callbacks.",
+    "dependencies": [
+      "stripe_client_TypeScript.prompt"
+    ],
+    "priority": 18,
+    "filename": "payment_modal_component_TypeScriptReact.prompt",
+    "filepath": "src/components/PaymentModal.tsx",
+    "tags": [
+      "frontend",
+      "component",
+      "payments"
+    ],
+    "context_urls": [
+      {
+        "url": "https://docs.stripe.com/payment-links",
+        "purpose": "Stripe Payment Links integration"
+      }
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [
+          {
+            "name": "isOpen",
+            "type": "boolean",
+            "required": true
+          },
+          {
+            "name": "onClose",
+            "type": "() => void",
+            "required": true
+          },
+          {
+            "name": "remainingFreeMatches",
+            "type": "number",
+            "required": true
+          }
+        ],
+        "emits": [
+          "close",
+          "success"
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Disclaimer banner component displays required medical disclaimer on all screens",
+    "description": "React component rendering required medical disclaimer text. Styled as persistent banner at bottom of screen. Text: 'This tool provides informational guidance only and does not constitute medical advice. Always consult with a qualified healthcare provider before making decisions about clinical trial participation.'",
+    "dependencies": [],
+    "priority": 19,
+    "filename": "disclaimer_banner_component_TypeScriptReact.prompt",
+    "filepath": "src/components/DisclaimerBanner.tsx",
+    "tags": [
+      "frontend",
+      "component",
+      "compliance"
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [],
+        "emits": []
+      }
+    }
+  },
+  {
+    "reason": "Landing page introduces the product with hero section and CTA to intake",
+    "description": "React page component for landing route (/). Displays hero section with value proposition, problem statement, how-it-works steps, and CTA button linking to intake form. Mobile-responsive layout with Tailwind styling.",
+    "dependencies": [
+      "disclaimer_banner_component_TypeScriptReact.prompt"
+    ],
+    "priority": 20,
+    "filename": "landing_page_TypeScriptReact.prompt",
+    "filepath": "src/pages/Landing.tsx",
+    "tags": [
+      "frontend",
+      "page"
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/",
+        "params": [],
+        "dataSources": []
+      }
+    }
+  },
+  {
+    "reason": "Intake page renders patient form and initiates pipeline on submit",
+    "description": "React page component for intake route (/intake). Renders IntakeForm component. On submit, stores patient profile in session state and navigates to processing page. Includes back link to landing.",
+    "dependencies": [
+      "intake_form_component_TypeScriptReact.prompt",
+      "disclaimer_banner_component_TypeScriptReact.prompt",
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 21,
+    "filename": "intake_page_TypeScriptReact.prompt",
+    "filepath": "src/pages/Intake.tsx",
+    "tags": [
+      "frontend",
+      "page"
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/intake",
+        "params": [],
+        "dataSources": []
+      }
+    }
+  },
+  {
+    "reason": "Processing page shows pipeline execution status with animated progress",
+    "description": "React page component for processing route (/processing). Executes orchestrator pipeline on mount. Displays ProgressIndicator with real-time status updates. On completion, navigates to results page with data. Handles errors with retry option.",
+    "dependencies": [
+      "progress_indicator_component_TypeScriptReact.prompt",
+      "orchestrator_TypeScript.prompt",
+      "disclaimer_banner_component_TypeScriptReact.prompt"
+    ],
+    "priority": 22,
+    "filename": "processing_page_TypeScriptReact.prompt",
+    "filepath": "src/pages/Processing.tsx",
+    "tags": [
+      "frontend",
+      "page"
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/processing",
+        "params": [],
+        "dataSources": [
+          {
+            "kind": "other",
+            "source": "orchestrator.runPipeline",
+            "description": "Executes multi-agent pipeline"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "Results page displays all match results with visualization and audio player",
+    "description": "React page component for results route (/results). Displays MatchPieChart, sorted TrialCard list, AudioPlayer with voice summary. Includes 'Start Over' button to reset and return to landing. Shows disclaimer banner.",
+    "dependencies": [
+      "trial_card_component_TypeScriptReact.prompt",
+      "match_pie_chart_component_TypeScriptReact.prompt",
+      "audio_player_component_TypeScriptReact.prompt",
+      "payment_modal_component_TypeScriptReact.prompt",
+      "disclaimer_banner_component_TypeScriptReact.prompt",
+      "schemas_TypeScript.prompt"
+    ],
+    "priority": 23,
+    "filename": "results_page_TypeScriptReact.prompt",
+    "filepath": "src/pages/Results.tsx",
+    "tags": [
+      "frontend",
+      "page"
+    ],
+    "interface": {
+      "type": "page",
+      "page": {
+        "route": "/results",
+        "params": [],
+        "dataSources": [
+          {
+            "kind": "other",
+            "source": "session state",
+            "description": "Pipeline results from processing page"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "reason": "App root component sets up routing and global providers",
+    "description": "React root component with React Router configuration. Defines routes for /, /intake, /processing, /results. Wraps app in session context provider for sharing pipeline data between pages. Includes global error boundary.",
+    "dependencies": [
+      "landing_page_TypeScriptReact.prompt",
+      "intake_page_TypeScriptReact.prompt",
+      "processing_page_TypeScriptReact.prompt",
+      "results_page_TypeScriptReact.prompt"
+    ],
+    "priority": 24,
+    "filename": "app_root_TypeScriptReact.prompt",
+    "filepath": "src/App.tsx",
+    "tags": [
+      "frontend",
+      "root",
+      "routing"
+    ],
+    "context_urls": [
+      {
+        "url": "https://reactrouter.com/en/main",
+        "purpose": "React Router v6 documentation"
+      }
+    ],
+    "interface": {
+      "type": "component",
+      "component": {
+        "props": [],
+        "emits": []
+      }
+    }
+  },
+  {
+    "reason": "Main entry point initializes React app and mounts to DOM",
+    "description": "Application entry point. Imports global CSS, initializes React 18 with createRoot, renders App component. Sets up strict mode for development.",
+    "dependencies": [
+      "app_root_TypeScriptReact.prompt"
+    ],
+    "priority": 25,
+    "filename": "main_entry_TypeScriptReact.prompt",
+    "filepath": "src/main.tsx",
+    "tags": [
+      "frontend",
+      "entry"
+    ],
+    "interface": {
+      "type": "module",
+      "module": {
+        "functions": []
+      }
+    }
+  }
+]

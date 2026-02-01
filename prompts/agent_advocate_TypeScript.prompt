@@ -1,0 +1,66 @@
+<pdd-reason>Agent 4 generates compassionate voice scripts and synthesizes audio via ElevenLabs</pdd-reason>
+
+<pdd-dependency>toolhouse_client_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>elevenlabs_client_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["runAdvocateAgent", "AdvocateInput", "VoiceScript"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/toolhouse_client_TypeScript.prompt</include>
+<include>prompts/elevenlabs_client_TypeScript.prompt</include>
+
+# Role and Scope
+Patient Advocate agent. Takes match results and generates compassionate, plain-language voice scripts with clear next steps. Synthesizes audio via ElevenLabs API with support for multiple languages.
+
+# Output File
+`agents/advocate/index.ts`
+
+# Requirements
+
+1. Export runAdvocateAgent(input: AdvocateInput) that:
+   - Takes match results and patient preferences
+   - Generates voice script via LLM
+   - Synthesizes audio via ElevenLabs
+   - Returns Promise<VoiceScript> with text and audio URL
+
+2. Define AdvocateInput type with:
+   - matchResults: MatchResult[]
+   - patientProfile: PatientProfile
+   - language: string (default "en")
+
+3. Voice script generation guidelines:
+   - Written at 8th-grade reading level
+   - Warm, encouraging, but realistic tone
+   - No false hope for low-scoring matches
+   - 60-90 seconds when spoken (~150-200 words)
+
+4. Script structure:
+   - Opening: Acknowledge the patient's journey
+   - Summary: Overview of matches found
+   - Highlights: Top 1-2 strong matches with key details
+   - Next steps: "Talk to your doctor about these options"
+   - Closing: Required disclaimer
+
+5. Required disclaimer text:
+   "This information is for educational purposes only and should not replace professional medical advice. Please discuss these options with your healthcare provider before making any decisions about clinical trial participation."
+
+6. Language-specific adaptations:
+   - Use culturally appropriate greetings
+   - Adjust formality level by language
+   - Ensure medical terms are translated appropriately
+
+7. Audio synthesis:
+   - Select voice matching patient's language preference
+   - Use stability 0.5, similarity boost 0.75
+   - Generate single continuous audio file
+
+8. Handle edge cases:
+   - No matches found: Encouraging message with alternatives
+   - All low scores: Gentle explanation, suggest future options

@@ -1,0 +1,67 @@
+<pdd-reason>Intake page renders patient form and initiates pipeline on submit</pdd-reason>
+
+<pdd-dependency>intake_form_component_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>disclaimer_banner_component_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "page",
+  "route": "/intake",
+  "name": "Intake"
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/intake_form_component_TypeScriptReact.prompt</include>
+<include>prompts/disclaimer_banner_component_TypeScriptReact.prompt</include>
+
+# Role and Scope
+React page component for intake route (/intake). Renders the IntakeForm component, handles form submission by storing patient profile in session state, and navigates to processing page.
+
+# Output File
+`src/pages/Intake.tsx`
+
+# Requirements
+
+1. Export Intake page component
+
+2. Page layout:
+   - Page title: "Tell Us About Yourself"
+   - Brief instructions paragraph
+   - IntakeForm component
+   - Back link to landing page
+
+3. Form submission handling:
+   - Validate data with PatientProfileSchema
+   - Store validated profile in session context/state
+   - Navigate to /processing on success
+   - Handle validation errors gracefully
+
+4. Session state management:
+   - Use React context for sharing data between pages
+   - Store: patientProfile, results (null initially)
+
+5. Loading state:
+   - Pass isLoading prop to IntakeForm
+   - Disable form during navigation
+
+6. Error handling:
+   - Display toast/alert for unexpected errors
+   - Don't lose form data on error
+
+7. Privacy notice:
+   - Small text near form explaining data handling
+   - "Your information is used only for matching"
+
+8. Navigation:
+   - Use React Router's useNavigate hook
+   - Back button/link to landing
+
+9. Include DisclaimerBanner at bottom
+
+10. Style with Tailwind CSS:
+    - Centered container (max-width 640px)
+    - Card-style form wrapper
+    - Professional, reassuring design

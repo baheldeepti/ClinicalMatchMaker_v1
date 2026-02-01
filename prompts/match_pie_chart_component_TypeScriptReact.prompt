@@ -1,0 +1,66 @@
+<pdd-reason>Pie chart component visualizes match category distribution across trials</pdd-reason>
+
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "component",
+  "name": "MatchPieChart",
+  "props": ["matchResults"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+
+# Role and Scope
+React component using Recharts to display a pie chart of match category distribution. Shows how many trials fall into each match category with color-coded segments.
+
+# Output File
+`src/components/MatchPieChart.tsx`
+
+# Requirements
+
+1. Export MatchPieChart component with props:
+   - matchResults: MatchResult[] (from schemas)
+
+2. Calculate category distribution:
+   - Count trials in each category
+   - Handle empty results gracefully
+
+3. Pie chart segments:
+   - strong_match: green (#22c55e) - "Strong Matches"
+   - possible_match: yellow (#eab308) - "Possible Matches"
+   - future_potential: blue (#3b82f6) - "Future Potential"
+   - not_eligible: gray (#6b7280) - "Not Eligible"
+
+4. Chart configuration:
+   - Use Recharts PieChart component
+   - Inner radius for donut style (optional)
+   - Animate on mount
+   - Responsive container
+
+5. Labels:
+   - Show count inside or near each segment
+   - Hide segments with 0 count
+
+6. Legend:
+   - Horizontal below chart
+   - Color swatch + label + count
+   - Clickable to highlight segment
+
+7. Center text (if donut style):
+   - Total number of trials
+   - "Trials Analyzed"
+
+8. Handle edge cases:
+   - No results: show placeholder message
+   - All same category: single segment chart
+
+9. Style with Tailwind CSS:
+   - Centered in container
+   - Max width 400px
+   - Adequate spacing around legend
+
+# Context
+<web>https://recharts.org/en-US/api/PieChart</web>

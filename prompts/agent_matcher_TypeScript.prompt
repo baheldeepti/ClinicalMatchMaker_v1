@@ -1,0 +1,67 @@
+<pdd-reason>Agent 3 compares patient profile against eligibility criteria to produce match scores</pdd-reason>
+
+<pdd-dependency>toolhouse_client_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["runMatcherAgent", "MatcherInput", "MatchResult"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/toolhouse_client_TypeScript.prompt</include>
+
+# Role and Scope
+Clinical Matching Specialist agent. Compares patient profile fields against extracted eligibility criteria, evaluates exclusions, calculates weighted match scores, and generates plain-language summaries.
+
+# Output File
+`agents/matcher/index.ts`
+
+# Requirements
+
+1. Export runMatcherAgent(input: MatcherInput) that:
+   - Takes patient profile and eligibility criteria
+   - Evaluates match using LLM reasoning via Toolhouse
+   - Returns Promise<MatchResult> with score and breakdown
+
+2. Define MatcherInput type with:
+   - patientProfile: PatientProfile
+   - eligibilityCriteria: EligibilityCriteria
+   - nctId: string
+
+3. Matching algorithm:
+   - Step 1: Check hard exclusions first (automatic disqualification)
+   - Step 2: Evaluate inclusion criteria alignment
+   - Step 3: Calculate weighted score (0-100)
+   - Step 4: Assign category based on score
+
+4. Score categories:
+   - strong_match: 75-100 (meets most/all criteria)
+   - possible_match: 50-74 (meets many, some uncertain)
+   - future_potential: 25-49 (doesn't currently qualify, may later)
+   - not_eligible: 0-24 (hard exclusion or major mismatch)
+
+5. Factor analysis:
+   - matchingFactors: criteria the patient meets (with weight 1-10)
+   - blockingFactors: criteria that disqualify (with reason)
+   - uncertainFactors: criteria that couldn't be evaluated
+
+6. Criteria evaluation weights:
+   - Diagnosis match: weight 10
+   - Stage alignment: weight 8
+   - Biomarker match: weight 9
+   - ECOG score: weight 7
+   - Prior treatment: weight 6
+   - Age/demographics: weight 5
+
+7. Generate plain-language summary:
+   - 2-3 sentences explaining match result
+   - Written at 8th-grade reading level
+   - Include key matching or blocking factor
+
+8. Handle incomplete patient data:
+   - Mark missing fields as "uncertain"
+   - Don't penalize score for missing non-essential data

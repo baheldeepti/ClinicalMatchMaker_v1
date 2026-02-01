@@ -1,0 +1,80 @@
+<pdd-reason>Results page displays all match results with visualization and audio player</pdd-reason>
+
+<pdd-dependency>trial_card_component_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>match_pie_chart_component_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>audio_player_component_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>payment_modal_component_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>disclaimer_banner_component_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "page",
+  "route": "/results",
+  "name": "Results"
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/trial_card_component_TypeScriptReact.prompt</include>
+<include>prompts/match_pie_chart_component_TypeScriptReact.prompt</include>
+<include>prompts/audio_player_component_TypeScriptReact.prompt</include>
+<include>prompts/payment_modal_component_TypeScriptReact.prompt</include>
+<include>prompts/disclaimer_banner_component_TypeScriptReact.prompt</include>
+
+# Role and Scope
+React page component for results route (/results). Displays comprehensive match results including pie chart visualization, trial cards sorted by score, audio player with voice summary, and option to start over.
+
+# Output File
+`src/pages/Results.tsx`
+
+# Requirements
+
+1. Export Results page component
+
+2. Data retrieval:
+   - Get results from session context
+   - If no results, redirect to /intake
+   - Handle payment success/cancelled query params
+
+3. Page header:
+   - Title: "Your Clinical Trial Matches"
+   - Summary: "We found X trials that may be relevant"
+   - Patient profile summary (collapsible)
+
+4. Audio summary section:
+   - AudioPlayer with generated voice script
+   - Prominent placement at top
+   - "Listen to Your Summary" heading
+
+5. Visualization section:
+   - MatchPieChart showing category distribution
+   - Legend explaining categories
+
+6. Trial cards list:
+   - Sort by match score (highest first)
+   - Group by category (strong, possible, future, not eligible)
+   - Section headers for each category
+   - Render TrialCard for each result
+
+7. Filtering/sorting options:
+   - Filter by category
+   - Sort by score or distance
+   - Search by keyword (optional)
+
+8. Actions:
+   - "Start Over" button -> clears session, goes to /intake
+   - "Print Results" button (optional)
+   - "Share" functionality (optional)
+
+9. Payment integration:
+   - Show PaymentModal if free tier exceeded
+   - Handle payment success message
+
+10. Include DisclaimerBanner at bottom
+
+11. Style with Tailwind CSS:
+    - Responsive grid for trial cards
+    - Clear visual hierarchy
+    - Print-friendly styles

@@ -1,0 +1,68 @@
+<pdd-reason>Patient intake form component with medical profile fields and validation</pdd-reason>
+
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "component",
+  "name": "IntakeForm",
+  "props": ["onSubmit", "isLoading"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+
+# Role and Scope
+React component for patient data entry. Collects medical profile information with form validation using react-hook-form and Zod. Submits validated data to orchestrator pipeline.
+
+# Output File
+`src/components/IntakeForm.tsx`
+
+# Requirements
+
+1. Export IntakeForm component with props:
+   - onSubmit: (data: PatientProfile) => Promise<void>
+   - isLoading?: boolean (disables form during submission)
+
+2. Form fields with validation:
+   - diagnosis: text input (required, min 3 chars)
+   - stage: dropdown ["I", "II", "III", "IV", "Unknown"] (required)
+   - biomarkers: text input (comma-separated, optional)
+   - ecogScore: dropdown [0, 1, 2, 3, 4] with descriptions (required)
+   - previousTreatments: multi-select checkboxes (optional)
+   - zipcode: text input (5-digit pattern, required)
+   - travelRadiusMiles: slider 10-200 miles (default 50)
+   - languagePreference: dropdown ["en", "es", "zh", "fr", "de"] (default "en")
+
+3. ECOG score descriptions:
+   - 0: Fully active
+   - 1: Restricted but ambulatory
+   - 2: Ambulatory, capable of self-care
+   - 3: Limited self-care, confined >50% of waking hours
+   - 4: Completely disabled
+
+4. Treatment options for previousTreatments:
+   - Chemotherapy
+   - Radiation therapy
+   - Immunotherapy
+   - Targeted therapy
+   - Surgery
+   - Hormone therapy
+   - None
+
+5. Use react-hook-form with zodResolver for validation
+
+6. Display inline validation errors below each field
+
+7. Show loading state on submit button when isLoading=true
+
+8. Style with Tailwind CSS:
+   - Clean, medical-professional appearance
+   - Responsive layout (stacked on mobile, 2-column on desktop)
+   - Accessible form labels and error messages
+
+9. Parse biomarkers string into array on submit
+
+# Context
+<web>https://react-hook-form.com/get-started#SchemaValidation</web>

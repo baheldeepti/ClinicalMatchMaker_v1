@@ -1,0 +1,63 @@
+<pdd-reason>ElevenLabs API client for text-to-speech synthesis with multi-language support</pdd-reason>
+
+<pdd-dependency>config_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["createElevenLabsClient", "synthesizeSpeech", "ElevenLabsClient", "AudioResult", "SpeechOptions"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/config_TypeScript.prompt</include>
+
+# Role and Scope
+TypeScript client wrapping ElevenLabs API for text-to-speech synthesis. Converts voice scripts to audio using Flash v2.5 model for low latency, supporting multiple voices and languages.
+
+# Output File
+`lib/elevenlabs.ts`
+
+# Requirements
+
+1. Export createElevenLabsClient(apiKey: string) that:
+   - Stores API key for authenticated requests
+   - Configures base URL for ElevenLabs API
+   - Returns typed ElevenLabsClient instance
+
+2. Export synthesizeSpeech(client, text, options) that:
+   - Calls ElevenLabs text-to-speech endpoint
+   - Uses "eleven_flash_v2_5" model for low latency
+   - Returns Promise<AudioResult> with audio URL and metadata
+   - Handles text chunking for long scripts (>5000 chars)
+
+3. Define SpeechOptions type with:
+   - voiceId: string (default to a warm, professional voice)
+   - language: enum ["en", "es", "zh", "fr", "de"]
+   - stability: number (0-1, default 0.5)
+   - similarityBoost: number (0-1, default 0.75)
+
+4. Define AudioResult type with:
+   - audioUrl: string (URL to generated audio)
+   - duration: number (estimated duration in seconds)
+   - format: "mp3"
+
+5. Map language codes to appropriate voice IDs:
+   - en: Rachel (warm, clear English)
+   - es: Spanish-speaking voice
+   - zh: Chinese-speaking voice
+   - fr: French-speaking voice
+   - de: German-speaking voice
+
+6. Handle audio streaming response and convert to blob URL
+
+7. Implement error handling for:
+   - Invalid API key
+   - Rate limiting (character quota)
+   - Text too long
+   - Voice not found
+
+8. Estimate audio duration from text length (~150 words/minute)
+
+# Context
+<web>https://elevenlabs.io/docs/api-reference/text-to-speech</web>

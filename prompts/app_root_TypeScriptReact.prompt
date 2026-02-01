@@ -1,0 +1,74 @@
+<pdd-reason>App root component sets up routing and global providers</pdd-reason>
+
+<pdd-dependency>landing_page_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>intake_page_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>processing_page_TypeScriptReact.prompt</pdd-dependency>
+<pdd-dependency>results_page_TypeScriptReact.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "component",
+  "name": "App",
+  "props": []
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/landing_page_TypeScriptReact.prompt</include>
+<include>prompts/intake_page_TypeScriptReact.prompt</include>
+<include>prompts/processing_page_TypeScriptReact.prompt</include>
+<include>prompts/results_page_TypeScriptReact.prompt</include>
+
+# Role and Scope
+React root component with React Router configuration and global context providers. Defines application routes and wraps the app in necessary providers for state sharing between pages.
+
+# Output File
+`src/App.tsx`
+
+# Requirements
+
+1. Export App component as default
+
+2. Route configuration using React Router v6:
+   - "/" -> Landing page
+   - "/intake" -> Intake page
+   - "/processing" -> Processing page
+   - "/results" -> Results page
+   - "*" -> Redirect to "/" (404 handling)
+
+3. Session context provider:
+   - Create SessionContext with:
+     - patientProfile: PatientProfile | null
+     - pipelineResults: PipelineResult | null
+     - setPatientProfile: (profile) => void
+     - setPipelineResults: (results) => void
+     - clearSession: () => void
+   - Wrap routes in SessionProvider
+
+4. Global error boundary:
+   - Catch and display errors gracefully
+   - "Something went wrong" fallback UI
+   - "Try Again" button to reset state
+   - Log errors for debugging
+
+5. Browser router setup:
+   - Use BrowserRouter for clean URLs
+   - Handle base path if deployed to subdirectory
+
+6. Layout wrapper (optional):
+   - Common header/navigation (if any)
+   - Main content area
+   - Consistent padding/margins
+
+7. Suspense boundary:
+   - Wrap routes in Suspense
+   - Loading fallback for lazy-loaded pages
+
+8. Strict mode for development:
+   - Wrap in React.StrictMode
+
+9. Style imports:
+   - Import global CSS (index.css or globals.css)
+
+# Context
+<web>https://reactrouter.com/en/main</web>

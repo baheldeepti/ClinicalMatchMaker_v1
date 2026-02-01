@@ -1,0 +1,66 @@
+<pdd-reason>Agent 1 discovers actively recruiting clinical trials matching patient condition via ClinicalTrials.gov API</pdd-reason>
+
+<pdd-dependency>toolhouse_client_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>rtrvr_client_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>geo_utils_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["runScoutAgent", "ScoutInput", "TrialDiscoveryOutput"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/toolhouse_client_TypeScript.prompt</include>
+<include>prompts/geo_utils_TypeScript.prompt</include>
+
+# Role and Scope
+Clinical Trial Scout agent using Toolhouse orchestration. Queries ClinicalTrials.gov API v2.0 for actively recruiting interventional trials, filters by patient condition and location, and returns up to 5 trial candidates.
+
+# Output File
+`agents/scout/index.ts`
+
+# Requirements
+
+1. Export runScoutAgent(input: ScoutInput) that:
+   - Takes patient diagnosis, location, and preferences
+   - Queries ClinicalTrials.gov API for matching trials
+   - Returns Promise<TrialDiscoveryOutput> with trial candidates
+
+2. Define ScoutInput type with:
+   - diagnosis: string (cancer type or condition)
+   - zipcode: string (patient location)
+   - travelRadiusMiles: number
+   - phase?: string[] (filter by trial phases)
+
+3. Define TrialDiscoveryOutput with:
+   - trials: Trial[] (up to 5 matches)
+   - totalFound: number (total matching before limit)
+   - searchParams: object (for transparency)
+
+4. ClinicalTrials.gov API v2.0 query parameters:
+   - query.cond: condition/disease term
+   - filter.overallStatus: RECRUITING
+   - filter.studyType: INTERVENTIONAL
+   - filter.geo: distance filter using patient zipcode
+   - pageSize: 20 (then filter to top 5)
+   - fields: NCTId, BriefTitle, Phase, OverallStatus, LeadSponsorName, Condition, InterventionName, LocationFacility, LocationCity, LocationState, LocationZip
+
+5. Post-process results:
+   - Calculate distance for each trial location
+   - Filter to locations within travel radius
+   - Sort by relevance (condition match) then distance
+   - Return top 5 trials
+
+6. Handle API errors:
+   - No results found: return empty array with message
+   - API timeout: retry once, then fail gracefully
+   - Rate limiting: wait and retry
+
+7. Construct trial URLs: https://clinicaltrials.gov/study/{nctId}
+
+# Context
+<web>https://clinicaltrials.gov/data-api/api</web>

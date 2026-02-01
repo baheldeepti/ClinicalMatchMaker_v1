@@ -1,0 +1,69 @@
+<pdd-reason>Payment modal for Stripe checkout when user exceeds 5 free matches</pdd-reason>
+
+<pdd-dependency>stripe_client_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "component",
+  "name": "PaymentModal",
+  "props": ["isOpen", "onClose", "remainingFreeMatches"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/stripe_client_TypeScript.prompt</include>
+
+# Role and Scope
+React component displaying upgrade prompt and Stripe checkout integration. Shows remaining free matches, pricing info, and handles redirect to Stripe Payment Link for serverless checkout.
+
+# Output File
+`src/components/PaymentModal.tsx`
+
+# Requirements
+
+1. Export PaymentModal component with props:
+   - isOpen: boolean (controls visibility)
+   - onClose: () => void (close callback)
+   - remainingFreeMatches: number (0-5)
+
+2. Modal structure:
+   - Overlay backdrop (semi-transparent)
+   - Centered modal container
+   - Close button (X) in corner
+
+3. Content sections:
+   - Heading: "Upgrade Your Search"
+   - Free tier status: "X free matches remaining"
+   - Value proposition: Why upgrade
+   - Pricing: Clear price display
+   - CTA button: "Upgrade Now"
+
+4. Upgrade benefits messaging:
+   - Unlimited trial matches
+   - Priority processing
+   - Save and compare results
+
+5. Stripe integration:
+   - Load Stripe.js on modal open
+   - "Upgrade Now" triggers redirectToCheckout
+   - Handle loading state during redirect
+   - Show error if Stripe unavailable
+
+6. Alternative actions:
+   - "Maybe Later" button (calls onClose)
+   - "Contact Us" link for questions
+
+7. Accessibility:
+   - Focus trap within modal
+   - Escape key closes modal
+   - aria-modal and role attributes
+   - Return focus to trigger on close
+
+8. Style with Tailwind CSS:
+   - Clean, professional appearance
+   - Trust indicators (secure payment badge)
+   - Mobile-responsive
+
+9. Handle edge cases:
+   - Stripe not loaded: show loading spinner
+   - Payment link error: show error message

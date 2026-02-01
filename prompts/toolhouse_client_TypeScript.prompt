@@ -1,0 +1,56 @@
+<pdd-reason>Toolhouse SDK wrapper for multi-agent orchestration with typed responses</pdd-reason>
+
+<pdd-dependency>config_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["createToolhouseClient", "runAgent", "ToolhouseClient", "AgentResult"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/config_TypeScript.prompt</include>
+
+# Role and Scope
+TypeScript client wrapping Toolhouse SDK for executing AI agents with tool bundles. Handles agent-to-agent communication, pipeline state management, and typed responses using Anthropic Claude as the LLM provider.
+
+# Output File
+`lib/toolhouse.ts`
+
+# Requirements
+
+1. Export createToolhouseClient(apiKey: string) that:
+   - Initializes Toolhouse SDK with provided API key
+   - Configures Anthropic Claude as the LLM provider
+   - Returns typed ToolhouseClient instance
+   - Throws if initialization fails
+
+2. Export runAgent<T>(client, agentId, input) that:
+   - Executes specified agent with input payload
+   - Handles tool calls automatically via Toolhouse
+   - Returns Promise<AgentResult<T>> with typed output
+   - Includes execution metadata (duration, tool calls made)
+
+3. Define AgentResult<T> type with:
+   - output: T (typed agent output)
+   - success: boolean
+   - error?: string
+   - metadata: { duration: number, toolCalls: string[] }
+
+4. Support agent bundles for:
+   - "clinical-trial-scout" - trial discovery
+   - "eligibility-extractor" - criteria extraction
+   - "clinical-matcher" - patient matching
+   - "patient-advocate" - voice generation
+
+5. Implement retry logic with exponential backoff (3 attempts max)
+
+6. Handle rate limiting gracefully with informative errors
+
+7. Log agent execution for debugging (without sensitive data)
+
+# Context
+<web>https://docs.toolhouse.ai/toolhouse/quick-start/typescript</web>

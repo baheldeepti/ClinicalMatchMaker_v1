@@ -1,0 +1,53 @@
+<pdd-reason>Disclaimer banner component displays required medical disclaimer on all screens</pdd-reason>
+
+<pdd-interface>
+{
+  "type": "component",
+  "name": "DisclaimerBanner",
+  "props": []
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+
+# Role and Scope
+React component rendering the required medical disclaimer text. Styled as a persistent banner at the bottom of every screen for regulatory compliance.
+
+# Output File
+`src/components/DisclaimerBanner.tsx`
+
+# Requirements
+
+1. Export DisclaimerBanner component with no props
+
+2. Disclaimer text (required, do not modify):
+   "This tool provides informational guidance only and does not constitute medical advice. Always consult with a qualified healthcare provider before making decisions about clinical trial participation."
+
+3. Visual design:
+   - Fixed position at bottom of viewport
+   - Full width banner
+   - Subtle background color (light gray or light blue)
+   - Small but readable text (12-14px)
+
+4. Layout options:
+   - Single line on desktop
+   - May wrap to 2 lines on mobile
+   - Centered text alignment
+
+5. Icon (optional):
+   - Small info icon before text
+   - Medical/health related icon
+
+6. Spacing:
+   - Adequate padding (8-12px vertical)
+   - Does not overlap page content
+
+7. Accessibility:
+   - role="contentinfo" or role="note"
+   - Sufficient color contrast (4.5:1 minimum)
+   - Readable at 200% zoom
+
+8. Style with Tailwind CSS:
+   - Use fixed positioning
+   - z-index to stay above content
+   - Subtle border-top for definition

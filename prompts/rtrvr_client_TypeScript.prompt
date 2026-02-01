@@ -1,0 +1,60 @@
+<pdd-reason>rtrvr.ai API client for web scraping and data extraction from clinical trial pages</pdd-reason>
+
+<pdd-dependency>config_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["createRtrvrClient", "extractTrialData", "RtrvrClient", "TrialExtraction"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/config_TypeScript.prompt</include>
+
+# Role and Scope
+TypeScript client for rtrvr.ai API. Provides methods for extracting structured eligibility data from ClinicalTrials.gov trial pages using the /agent endpoint for schema-guided extraction.
+
+# Output File
+`lib/rtrvr.ts`
+
+# Requirements
+
+1. Export createRtrvrClient(apiKey: string) that:
+   - Stores API key for authenticated requests
+   - Configures base URL for rtrvr.ai API
+   - Returns typed RtrvrClient instance
+
+2. Export extractTrialData(client, nctId) that:
+   - Constructs ClinicalTrials.gov URL from NCT ID
+   - Calls rtrvr.ai /agent endpoint with extraction schema
+   - Schema targets: eligibility criteria, age range, healthy volunteers
+   - Returns Promise<TrialExtraction> with structured data
+   - Handles extraction failures gracefully
+
+3. Define TrialExtraction type matching EligibilitySchema fields:
+   - inclusionCriteria: array of categorized criteria
+   - exclusionCriteria: array of categorized criteria
+   - ageRange: { min, max }
+   - acceptsHealthyVolunteers: boolean
+   - rawText: string (original criteria text for reference)
+
+4. Implement extraction schema that guides rtrvr.ai to:
+   - Parse inclusion/exclusion bullet points
+   - Categorize criteria by type (diagnosis, biomarker, treatment, demographics, other)
+   - Extract numeric age bounds from text like "18 years and older"
+
+5. Cache extraction results by NCT ID (in-memory, session duration)
+
+6. Set appropriate timeouts (30s for extraction operations)
+
+7. Handle common extraction errors:
+   - Page not found (invalid NCT ID)
+   - Rate limiting
+   - Extraction timeout
+   - Malformed response
+
+# Context
+<web>https://www.rtrvr.ai/docs/api#agent-endpoint</web>

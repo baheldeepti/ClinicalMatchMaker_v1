@@ -1,0 +1,47 @@
+<pdd-reason>Centralized configuration for all API keys and environment variables with validation</pdd-reason>
+
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["getConfig", "Config"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+
+# Role and Scope
+TypeScript module exporting validated environment configuration. Loads API keys from Vite environment variables and provides a typed getConfig() function with Zod validation.
+
+# Output File
+`lib/config.ts`
+
+# Requirements
+
+1. Define ConfigSchema with Zod validating:
+   - VITE_TOOLHOUSE_API_KEY: required string
+   - VITE_RTRVR_API_KEY: required string
+   - VITE_ELEVENLABS_API_KEY: required string
+   - VITE_STRIPE_PUBLISHABLE_KEY: required string
+   - VITE_CLINICALTRIALS_API_BASE: optional string (default "https://clinicaltrials.gov/api/v2")
+
+2. Export getConfig() function that:
+   - Reads from import.meta.env (Vite environment)
+   - Validates with ConfigSchema
+   - Throws descriptive error if required keys are missing
+   - Caches config after first successful validation
+
+3. Export Config type inferred from ConfigSchema
+
+4. Provide individual getter functions for each API key:
+   - getToolhouseApiKey()
+   - getRtrvrApiKey()
+   - getElevenLabsApiKey()
+   - getStripePublishableKey()
+   - getClinicalTrialsApiBase()
+
+5. Never log API keys - mask them in any error messages
+
+6. Support development mode with .env.local file

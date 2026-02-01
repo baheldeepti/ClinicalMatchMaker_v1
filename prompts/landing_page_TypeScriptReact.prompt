@@ -1,0 +1,66 @@
+<pdd-reason>Landing page introduces the product with hero section and CTA to intake</pdd-reason>
+
+<pdd-dependency>disclaimer_banner_component_TypeScriptReact.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "page",
+  "route": "/",
+  "name": "Landing"
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/disclaimer_banner_component_TypeScriptReact.prompt</include>
+
+# Role and Scope
+React page component for the landing route (/). Displays hero section with value proposition, explains how the tool works, and provides call-to-action to start the intake process.
+
+# Output File
+`src/pages/Landing.tsx`
+
+# Requirements
+
+1. Export Landing page component
+
+2. Hero section:
+   - Headline: Compelling value proposition (e.g., "Find Clinical Trials That Match Your Profile")
+   - Subheadline: Brief explanation of what the tool does
+   - Primary CTA button: "Find My Matches" linking to /intake
+   - Hero image or illustration (placeholder/stock)
+
+3. Problem statement section:
+   - "Why Clinical Trial Matching Matters"
+   - Statistics about trial access challenges
+   - Empathetic messaging about patient struggles
+
+4. How it works section (3-4 steps):
+   - Step 1: Enter your medical profile
+   - Step 2: AI searches thousands of trials
+   - Step 3: Get personalized match scores
+   - Step 4: Review results with your doctor
+
+5. Features/benefits section:
+   - Fast matching (describe speed)
+   - Personalized scoring
+   - Plain-language explanations
+   - Voice summaries
+
+6. Trust indicators:
+   - Data source: ClinicalTrials.gov
+   - Privacy commitment
+   - Not a substitute for medical advice
+
+7. Footer CTA:
+   - Repeat primary CTA
+   - "It's free to get started"
+
+8. Include DisclaimerBanner at bottom
+
+9. Style with Tailwind CSS:
+   - Mobile-first responsive design
+   - Professional healthcare aesthetic
+   - Ample whitespace
+   - Accessible typography (16px+ body)
+
+10. Use React Router's Link for navigation

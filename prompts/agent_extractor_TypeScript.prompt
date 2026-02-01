@@ -1,0 +1,65 @@
+<pdd-reason>Agent 2 extracts and parses eligibility criteria from trial pages into structured format</pdd-reason>
+
+<pdd-dependency>toolhouse_client_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>rtrvr_client_TypeScript.prompt</pdd-dependency>
+<pdd-dependency>schemas_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["runExtractorAgent", "ExtractorInput", "EligibilityCriteria"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/schemas_TypeScript.prompt</include>
+<include>prompts/toolhouse_client_TypeScript.prompt</include>
+<include>prompts/rtrvr_client_TypeScript.prompt</include>
+
+# Role and Scope
+Eligibility Extractor agent using rtrvr.ai for web extraction. Parses inclusion/exclusion criteria from ClinicalTrials.gov trial pages, categorizes criteria by type, and returns structured eligibility data.
+
+# Output File
+`agents/extractor/index.ts`
+
+# Requirements
+
+1. Export runExtractorAgent(input: ExtractorInput) that:
+   - Takes NCT ID of trial to extract
+   - Uses rtrvr.ai to scrape eligibility section
+   - Returns Promise<EligibilityCriteria> with structured data
+
+2. Define ExtractorInput type with:
+   - nctId: string (NCT number)
+   - trialUrl?: string (optional direct URL)
+
+3. Parse eligibility text into structured criteria:
+   - Split into inclusion and exclusion lists
+   - Identify bullet points or numbered items
+   - Preserve original text for each criterion
+
+4. Categorize each criterion by type:
+   - "diagnosis": cancer type, histology, disease stage
+   - "biomarker": genetic markers, protein expression (EGFR, PD-L1, etc.)
+   - "treatment": prior therapy requirements, washout periods
+   - "demographics": age, gender, geography
+   - "other": performance status, organ function, etc.
+
+5. Extract age eligibility:
+   - Parse phrases like "18 years and older", "18-75 years"
+   - Return { min: number, max: number }
+   - Default max to 120 if "no upper limit"
+
+6. Detect healthy volunteer acceptance:
+   - Look for "Accepts Healthy Volunteers: Yes/No"
+
+7. Use LLM via Toolhouse for criterion categorization:
+   - Provide context about clinical trial terminology
+   - Handle ambiguous criteria gracefully
+
+8. Handle extraction failures:
+   - Return partial results with error flag
+   - Include raw text for manual review
+
+# Context
+<web>https://www.rtrvr.ai/docs/api</web>

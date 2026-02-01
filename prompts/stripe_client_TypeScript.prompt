@@ -1,0 +1,53 @@
+<pdd-reason>Stripe client for payment checkout without backend server</pdd-reason>
+
+<pdd-dependency>config_TypeScript.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "module",
+  "exports": ["initStripe", "redirectToCheckout"]
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/config_TypeScript.prompt</include>
+
+# Role and Scope
+TypeScript module wrapping Stripe.js for client-only Checkout. Enables serverless payment flow using Stripe Payment Links for purchasing additional trial match sessions.
+
+# Output File
+`lib/stripe.ts`
+
+# Requirements
+
+1. Export initStripe(publishableKey: string) that:
+   - Loads Stripe.js SDK asynchronously
+   - Initializes with provided publishable key
+   - Returns Promise<Stripe> instance
+   - Caches instance after first initialization
+
+2. Export redirectToCheckout(stripe, priceId) that:
+   - Redirects user to Stripe Checkout
+   - Uses pre-configured Payment Link
+   - Handles success/cancel redirect URLs
+   - Returns Promise<void> (redirects browser)
+
+3. Define product tiers:
+   - Free tier: 5 trial matches
+   - Paid tier: Unlimited matches for session
+
+4. Configure redirect URLs:
+   - Success: /results?payment=success
+   - Cancel: /results?payment=cancelled
+
+5. Handle Stripe.js loading errors gracefully
+
+6. Export helper to check if Stripe is available:
+   - isStripeAvailable(): boolean
+
+7. Do not store payment information client-side
+
+8. Support test mode with test publishable key
+
+# Context
+<web>https://docs.stripe.com/payment-links</web>

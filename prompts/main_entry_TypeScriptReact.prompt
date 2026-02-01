@@ -1,0 +1,51 @@
+<pdd-reason>Main entry point initializes React app and mounts to DOM</pdd-reason>
+
+<pdd-dependency>app_root_TypeScriptReact.prompt</pdd-dependency>
+
+<pdd-interface>
+{
+  "type": "entry",
+  "name": "main"
+}
+</pdd-interface>
+
+<include>prompts/project_preamble.prompt</include>
+<include>prompts/app_root_TypeScriptReact.prompt</include>
+
+# Role and Scope
+Application entry point. Initializes React 18 with createRoot, imports global styles, and mounts the App component to the DOM with StrictMode for development.
+
+# Output File
+`src/main.tsx`
+
+# Requirements
+
+1. Import statements:
+   - React and ReactDOM from react-dom/client
+   - App component from ./App
+   - Global CSS file (./index.css)
+
+2. DOM mounting:
+   - Get root element by id "root"
+   - Create root using ReactDOM.createRoot
+   - Render App component
+
+3. StrictMode wrapper:
+   - Wrap App in React.StrictMode
+   - Enables additional development checks
+
+4. Root element validation:
+   - Throw clear error if #root element not found
+   - Helpful message for debugging
+
+5. Type safety:
+   - Assert root element as HTMLElement
+   - No TypeScript errors
+
+6. Keep minimal:
+   - No additional logic in entry point
+   - All app setup happens in App component
+
+7. Hot module replacement (Vite):
+   - Vite handles HMR automatically
+   - No additional configuration needed
