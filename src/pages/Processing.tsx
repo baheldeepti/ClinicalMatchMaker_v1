@@ -84,10 +84,8 @@ export function Processing() {
   useEffect(() => {
     runPipelineWithProgress();
 
-    return () => {
-      // Cleanup on unmount
-      abortControllerRef.current?.abort();
-    };
+    // Note: Don't abort on cleanup - React StrictMode double-mounts
+    // and would abort the pipeline prematurely
   }, [runPipelineWithProgress]);
 
   // Warn before leaving

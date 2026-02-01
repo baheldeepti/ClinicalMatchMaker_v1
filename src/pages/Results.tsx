@@ -222,17 +222,28 @@ export function Results() {
           </div>
         </div>
 
-        {/* Audio Summary */}
-        {voiceScript && voiceScript.audioUrl && (
+        {/* Voice Summary */}
+        {voiceScript && (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
-              Listen to Your Summary
+              {voiceScript.audioUrl ? 'Listen to Your Summary' : 'Your Personalized Summary'}
             </h2>
-            <AudioPlayer
-              audioUrl={voiceScript.audioUrl}
-              transcript={voiceScript.text}
-              duration={voiceScript.duration}
-            />
+            {voiceScript.audioUrl ? (
+              <AudioPlayer
+                audioUrl={voiceScript.audioUrl}
+                transcript={voiceScript.text}
+                duration={voiceScript.duration}
+              />
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <p className="text-sm text-blue-800 whitespace-pre-line">{voiceScript.text}</p>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Estimated reading time: {Math.ceil(voiceScript.duration / 60)} minute(s)
+                </p>
+              </div>
+            )}
           </div>
         )}
 

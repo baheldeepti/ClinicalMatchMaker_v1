@@ -353,15 +353,29 @@ export async function runScoutAgent(input: ScoutInput): Promise<TrialDiscoveryOu
     let trials = response.studies.map(transformStudyToTrial);
 
     // Filter by location radius and add distances
-    trials = trials.map((trial) => ({
-      ...trial,
-      locations: trial.locations.length > 0
-        ? filterByRadius(trial.locations, zipcode, travelRadiusMiles)
-        : addDistanceToLocations(trial.locations, zipcode),
-    }));
+    trials = trials.map((trial) => {
+      if (trial.locations.length === 0) {
+        return trial;
+      }
 
-    // Remove trials with no locations within radius
-    trials = trials.filter((trial) => trial.locations.length > 0);
+      const filteredLocations = filterByRadius(trial.locations, zipcode, travelRadiusMiles);
+
+      // If no locations match the radius, keep original locations with estimated distances
+      if (filteredLocations.length === 0) {
+        return {
+          ...trial,
+          locations: addDistanceToLocations(trial.locations, zipcode),
+        };
+      }
+
+      return {
+        ...trial,
+        locations: filteredLocations,
+      };
+    });
+
+    // Keep all trials (don't filter out based on location for mock data)
+    // trials = trials.filter((trial) => trial.locations.length > 0);
 
     // Sort by closest location distance
     trials.sort((a, b) => {

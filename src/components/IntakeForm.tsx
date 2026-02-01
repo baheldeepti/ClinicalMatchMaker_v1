@@ -10,20 +10,15 @@ import { z } from 'zod';
 const FormSchema = z.object({
   diagnosis: z.string().min(3, 'Diagnosis must be at least 3 characters'),
   stage: z.enum(['I', 'II', 'III', 'IV', 'Unknown']),
-  biomarkers: z.string().optional(),
-  ecogScore: z.coerce.number().int().min(0).max(4),
+  biomarkers: z.string().optional().default(''),
+  ecogScore: z.union([z.string(), z.number()]).transform(val => Number(val)),
   previousTreatments: z.array(z.string()).default([]),
-  zipcode: z.string().regex(/^\d{5}$/, 'Zipcode must be 5 digits'),
-  travelRadiusMiles: z.coerce.number().min(10).max(500).default(50),
+  zipcode: z.string().min(5, 'Zipcode must be 5 digits').max(5, 'Zipcode must be 5 digits'),
+  travelRadiusMiles: z.union([z.string(), z.number()]).transform(val => Number(val) || 50),
   languagePreference: z.enum(['en', 'es', 'zh', 'fr', 'de']).default('en'),
-}).transform((data) => ({
-  ...data,
-  biomarkers: data.biomarkers
-    ? data.biomarkers.split(',').map((b: string) => b.trim()).filter(Boolean)
-    : [],
-}));
+});
 
-type FormData = z.input<typeof FormSchema>;
+type FormData = z.infer<typeof FormSchema>;
 
 // ============================================================================
 // Props
@@ -95,21 +90,27 @@ export function IntakeForm({ onSubmit, isLoading = false }: IntakeFormProps) {
 
   const handleFormSubmit = async (data: FormData) => {
     console.log('Form submitted with data:', data);
-    try {
-      const parsed = FormSchema.parse(data);
-      console.log('Parsed data:', parsed);
-      await onSubmit(parsed as PatientProfile);
-    } catch (error) {
-      console.error('Form submission error:', error);
-    }
+    // Transform the data for PatientProfile
+    const profile: PatientProfile = {
+      diagnosis: data.diagnosis,
+      stage: data.stage,
+      biomarkers: data.biomarkers
+        ? String(data.biomarkers).split(',').map((b) => b.trim()).filter(Boolean)
+        : [],
+      ecogScore: Number(data.ecogScore),
+      previousTreatments: data.previousTreatments || [],
+      zipcode: data.zipcode,
+      travelRadiusMiles: Number(data.travelRadiusMiles) || 50,
+      languagePreference: data.languagePreference || 'en',
+    };
+    console.log('Submitting profile:', profile);
+    await onSubmit(profile);
   };
 
-  const onError = (errors: unknown) => {
-    console.error('Form validation errors:', errors);
+  const onError = (formErrors: unknown) => {
+    console.error('Form validation errors:', formErrors);
+    alert('Please fix form errors: ' + JSON.stringify(formErrors));
   };
-
-  // Log errors whenever they change
-  console.log('Current form errors:', errors);
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit, onError)} className="space-y-6">

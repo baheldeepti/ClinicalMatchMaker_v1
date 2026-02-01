@@ -105,8 +105,8 @@ function generateScriptFromTemplate(
 // Main Agent Function
 // ============================================================================
 
-// Skip external API calls in development
-const SKIP_AUDIO_SYNTHESIS = true;
+// Enable audio synthesis with ElevenLabs
+const SKIP_AUDIO_SYNTHESIS = false;
 
 /**
  * Run the Patient Advocate agent

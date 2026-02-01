@@ -5,10 +5,10 @@ import { z } from 'zod';
 // ============================================================================
 
 const ConfigSchema = z.object({
-  VITE_TOOLHOUSE_API_KEY: z.string().min(1, 'Toolhouse API key is required'),
-  VITE_RTRVR_API_KEY: z.string().min(1, 'rtrvr.ai API key is required'),
-  VITE_ELEVENLABS_API_KEY: z.string().min(1, 'ElevenLabs API key is required'),
-  VITE_STRIPE_PUBLISHABLE_KEY: z.string().min(1, 'Stripe publishable key is required'),
+  VITE_TOOLHOUSE_API_KEY: z.string().default(''),
+  VITE_RTRVR_API_KEY: z.string().default(''),
+  VITE_ELEVENLABS_API_KEY: z.string().default(''),
+  VITE_STRIPE_PUBLISHABLE_KEY: z.string().default(''),
   VITE_CLINICALTRIALS_API_BASE: z.string().url().default('https://clinicaltrials.gov/api/v2'),
 });
 
